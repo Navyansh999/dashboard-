@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../api/client';
 import {
   ShieldAlert,
   ChevronDown,
   Plus,
   Activity,
-  CheckCircle2
+  CheckCircle2,
+  Zap
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -21,9 +23,40 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const { currentUser, demoUsers, switchUser } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isMock, setIsMock] = useState(false);
+
+  useEffect(() => {
+    // Poll until mock mode is determined (set after first API call)
+    const check = setInterval(() => {
+      if (api.isMockMode()) {
+        setIsMock(true);
+        clearInterval(check);
+      }
+    }, 500);
+    return () => clearInterval(check);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-subtle" style={{ backgroundColor: 'rgba(7, 10, 19, 0.9)', backdropFilter: 'blur(12px)' }}>
+    <div style={{ position: 'sticky', top: 0, zIndex: 40 }}>
+      {/* Demo Mode Banner */}
+      {isMock && (
+        <div style={{
+          background: 'linear-gradient(90deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.08) 100%)',
+          borderBottom: '1px solid rgba(245, 158, 11, 0.4)',
+          padding: '6px 24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+        }}>
+          <Zap size={13} color="#fbbf24" />
+          <span style={{ fontSize: '0.72rem', color: '#fbbf24', fontWeight: 600, letterSpacing: '0.04em' }}>
+            DEMO MODE — Backend unavailable. All data is in-browser mock. RBAC, OCC &amp; workflow rules are fully enforced.
+          </span>
+          <Zap size={13} color="#fbbf24" />
+        </div>
+      )}
+    <header className="border-b border-subtle" style={{ backgroundColor: 'rgba(7, 10, 19, 0.9)', backdropFilter: 'blur(12px)' }}>
       <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 24px', height: '70px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         
         {/* Brand & Logo */}
@@ -201,5 +234,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       </div>
     </header>
+    </div>
   );
 };
