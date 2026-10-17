@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: newtonite-app
+    ports:
+      - "5000:5000"
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - DATABASE_PATH=/data/newtonite.db
+      - JWT_SECRET=newtonite_super_secret_jwt_key_2026
+      - OUTBOX_POLL_INTERVAL_MS=2000
+    volumes:
+      - newtonite-data:/data
+    restart: unless-stopped
+
+volumes:
+  newtonite-data:
+    driver: local
