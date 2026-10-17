@@ -21,6 +21,19 @@ export const app = express();
 app.use(cors());
 app.use(express.json());
 
+import { runSeed } from './db/seed.js';
+import { db } from './db/database.js';
+
+// Auto-seed if database is empty (e.g. fresh container or serverless /tmp)
+try {
+  const countRow = db.get<{ count: number }>('SELECT COUNT(*) as count FROM users');
+  if (!countRow || countRow.count === 0) {
+    runSeed(db);
+  }
+} catch (e) {
+  // ignore if tables not ready
+}
+
 // Serve static frontend assets if built
 if (fs.existsSync(clientDist)) {
   app.use(express.static(clientDist));
