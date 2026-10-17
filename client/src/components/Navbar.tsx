@@ -23,18 +23,21 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const { currentUser, demoUsers, switchUser } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isMock, setIsMock] = useState(false);
+  const [isMock, setIsMock] = useState(() => api.isMockMode());
 
   useEffect(() => {
-    // Poll until mock mode is determined (set after first API call)
-    const check = setInterval(() => {
-      if (api.isMockMode()) {
-        setIsMock(true);
-        clearInterval(check);
-      }
-    }, 500);
-    return () => clearInterval(check);
-  }, []);
+    // In case mock mode activates after mount (fallback path), re-check
+    if (!isMock) {
+      const check = setInterval(() => {
+        if (api.isMockMode()) {
+          setIsMock(true);
+          clearInterval(check);
+        }
+      }, 500);
+      return () => clearInterval(check);
+    }
+  }, [isMock]);
+
 
   return (
     <div style={{ position: 'sticky', top: 0, zIndex: 40 }}>

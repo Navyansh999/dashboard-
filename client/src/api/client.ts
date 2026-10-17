@@ -21,7 +21,19 @@ export class ApiError extends Error {
 }
 
 let currentAuthToken: string | null = null;
-let useMock = false; // set true when backend is unavailable
+
+// Auto-detect static deployment: if NOT running on localhost/127.0.0.1,
+// there is no backend — switch directly to mock mode.
+// This prevents Vercel's SPA rewrite from silently returning index.html
+// for /api/* routes (HTTP 200 with HTML body instead of JSON).
+const isLocalhost =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.startsWith('192.168.'));
+
+let useMock = !isLocalhost; // true on Vercel / any non-local host
+
 
 export function setAuthToken(token: string | null) {
   currentAuthToken = token;
