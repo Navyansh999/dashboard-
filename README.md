@@ -4,6 +4,9 @@
 > Built for the Newtonite Full-Stack Software Engineering Challenge.  
 > An internal system that enables cross-functional engineering, operations, payments, compliance, and customer support teams to manage and resolve high-stakes operational work items reliably under concurrency, pressure, and scale.
 
+**🌐 Live Production Deployment:** [https://newtonite-lemon.vercel.app](https://newtonite-lemon.vercel.app)  
+**📦 GitHub Repository:** [https://github.com/Navyansh999/dashboard-](https://github.com/Navyansh999/dashboard-)
+
 ---
 
 ## ⚡ What the System Does
